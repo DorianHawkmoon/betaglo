@@ -8,6 +8,8 @@ const int FLEXORS = 5;
 //state of the hand
 int flexs[DEDOS];
 int pressures[DEDOS];
+// variable que guarda si el dedo presion paso del maximo (toque fuerte)
+boolean maxPressures[DEDOS];
 
 //previous state of the hand
 int previousFlexs[DEDOS];
@@ -40,8 +42,10 @@ const int strongPressure = 240;
 
 //time of pressing sensor
 unsigned long timePressure[DEDOS];
+unsigned long timeWait[DEDOS];
 unsigned long timer=0;
 unsigned long timeResponse=1000;
+unsigned long timeWaitResponse=1000;
 
 const int FLEXOR = 1;
 const int PRESSURE = 2;
@@ -58,11 +62,12 @@ int valueOfSensor(int typeSensor, int sensor){
   int valueSensor = 0;
   int valueFinal = 0;
 
+  //segun si estoy mirando flexor o presion
   if(typeSensor == FLEXOR){
     valueSensor = analogRead(flexSensorPin[sensor]);
     //Serial.print("Flexor: ");
     //Serial.println(valueSensor);
-    valueFinal = valueSensor;//map(valueSensor, minimumSensorFlex, maximumSensorFlex, minimumFlex, maximumFlex);
+    valueFinal = map(valueSensor, minimumSensorFlex, maximumSensorFlex, minimumFlex, maximumFlex);
     //Serial.print("Flexor process: ");
     //Serial.println(valueFinal);
 
@@ -70,13 +75,9 @@ int valueOfSensor(int typeSensor, int sensor){
   else if(typeSensor == PRESSURE){
     int sensorButton=sensor+1;
     valueSensor = analogRead(pressureSensorPin[sensorButton]);
-    //Serial.print("Pressure: ");
-    //Serial.println(valueSensor);
-    valueFinal = valueSensor; //map(valueSensor, minimumSensorPressure, maximumSensorPressure, minimumPressure, maximumPressure);
-    //Serial.print("Pressure process: ");
+    valueFinal = valueSensor;
   }
 
-  //Serial.println();
   return valueFinal;
 }
 
@@ -91,7 +92,7 @@ void readState(){
 
   //read the values of the pressure's sensors
   for (int i=0; i<DEDOS; i++){
-    pressures[i] = valueOfSensor(PRESSURE, i);
+    pressures[i]=valueOfSensor(PRESSURE, i);
   }
 }
 
@@ -101,24 +102,38 @@ void readState(){
  * devuelve un int que corresponde a la enumeracion
  */
 ClickButton processButton(int delay, int button){
+  /* Estados: 0 -> estados anterior y actual no pulsados
+   * 1 -> anterior estado pulsado
+   * 2 -> estado actual pulsado
+   * 3 -> estado anterior y actual pulsado
+   */
   int compareStates= ((previousPressures[button]-deadPressure) > 0) ? 1:0;
-  compareStates= ((pressures[button]-deadPressure) > 0) ? compareStates+1:compareStates+2;
+  compareStates= ((pressures[button]-deadPressure) > 0) ? compareStates+2:compareStates;
   boolean touch=false;
   boolean strong=false;
+   
 
-  //comprobamos fuerza, si la supera, es strong y touch
+  //si no ha pasado suficiente tiempo de la anterior pulsacion y no coincide con que haya pulsado y despulsado
+  //sumamos el tiempo de espera entre toque y toque y salimos
+  if(timeWait[button]<0 && compareStates != 1){
+    //sumamos el tiempo transcurrido
+    timeWait[button]+=delay;
+    return no_click;
+  }
+  
+  //si hay suficiente fuerza...
   if(pressures[button]>=(strongPressure+deadPressure)){
     strong=true;
-    touch=true;
+    maxPressures[button]=true;
+  } 
 
-    //boton pulsado antes y despulsado, cuenta como toque
-  }
-  else  if( compareStates == 2 ){
+  //boton pulsado antes y despulsado, cuenta como toque
+  if( compareStates == 1 ){
     touch=true;
-
-    //boton se mantiene pulsado
   }
-  else if(compareStates == 3){
+
+  //boton se mantiene pulsado
+  else if(compareStates == 3 ){
     //sumamos el tiempo transcurrido
     timePressure[button]+=delay;
     //si ha superado el tiempo, cuenta como toque
@@ -127,20 +142,33 @@ ClickButton processButton(int delay, int button){
     }
   }
 
+  else if(compareStates == 2){
+    //acaba de pulsar, no hacemos nada
+  }
+
+
+
+
   //procesamos resultado
   if(touch){
     //seteamos el actual valor como no pulsado para que no se vuelva a tener en cuenta el siguiente frame
     pressures[button]=0;
-    //igualmente reseteamos su tiempo transcurrido
+    //igualmente reseteamos su tiempo transcurrido y le ponemos un tiempo negativo para que no haga varias pulsaciones
+    //del mismo toque
     timePressure[button]=0;
-
+    //establecemos el tiempo de espera antes de considerar otro toque del mismo boton
+    timeWait[button]=(timeWaitResponse*(-1));
+    //miramos si hubo toque fuerte
+    strong=maxPressures[button];
     //proceso fuerza y accion
     if(strong){
+      //reseteamos la presion fuerte para el siguiente toque
+      maxPressures[button]=false;
       return long_click;
-    }
-    else{
+    }else{
       return normal_click;
     }
+    
   }
   return no_click;
 }
@@ -198,14 +226,14 @@ void nextState(){
 
 void setup(){
   Serial.begin(9600);
-  
+
   //TODO setear los pines
   pressureSensorPin[0]=0;
   pressureSensorPin[1]=1;
   pressureSensorPin[2]=2;
   pressureSensorPin[3]=3;
   pressureSensorPin[4]=4;
-  
+
   //pins of sensors
   flexSensorPin[0]=6;
   flexSensorPin[1]=7;
@@ -215,11 +243,13 @@ void setup(){
 
   for (int i=0; i<DEDOS; i++){
     timePressure[i]=0;
+    timeWait[i]=0;
     flexorActived[i]=false;
     flexs[i] = 0;
+    maxPressures[i]=false;
     pressures[i] = 0;
   }
-        
+
   //copio los valores al previous
   readState();
 
@@ -233,5 +263,9 @@ void loop(){
   timer=millis();
   nextState();
 }
+
+
+
+
 
 

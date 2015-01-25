@@ -11,18 +11,18 @@ enum ClickButton{
 
 //enum of states/commands to sent to computer
 enum Commands {
-  button_right = (1 << 0), //los tres primeros dedos
-  button_left = (1 << 1),
-  button_middle = (1 << 2),
-  button_right_strong = (1 << 3), //los tres primeros dedos mas fuerte
-  button_left_strong = (1 << 4),
-  button_middle_strong = (1 << 5),
+  button_right = 1, //los tres primeros dedos
+  button_left = 2,
+  button_middle = 3,
+  button_right_strong = 4, //los tres primeros dedos mas fuerte
+  button_left_strong = 5,
+  button_middle_strong = 6,
 
-  axis_x_forward = (1 << 6),//flexion dos dedos
-  axis_x_back = (1 << 7),
+  axis_x_forward = 7,//flexion dos dedos
+  axis_x_back = 8,
 
-  axis_y_forward = (1 << 8), //flexion otros dos dedos
-  axis_y_back = (1 << 9),
+  axis_y_forward = 9, //flexion otros dos dedos
+  axis_y_back = 10,
 };
 
 #endif
