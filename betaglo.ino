@@ -21,13 +21,14 @@ boolean flexorActived[DEDOS]; //the value of them is stored in flexs (no need to
 
 
 //values of the flex sensor
-const int minimumSensorFlex = 10;
-const int maximumSensorFlex = 40;
+const int minimumSensorFlex = 0;
+const int maximumSensorFlex = 45;
 //values which will use with the flex sensor
 const int minimumFlex = 0;
 const int maximumFlex = 100;
 //dead zone flexion
 const int deadFlexion=20;
+int initialPosition[DEDOS];
 
 //values of the pressure sensor
 const int minimumSensorPressure = 10;
@@ -65,17 +66,12 @@ int valueOfSensor(int typeSensor, int sensor){
   //segun si estoy mirando flexor o presion
   if(typeSensor == FLEXOR){
     valueSensor = analogRead(flexSensorPin[sensor]);
-    //Serial.print("Flexor: ");
-    //Serial.println(valueSensor);
     valueFinal = map(valueSensor, minimumSensorFlex, maximumSensorFlex, minimumFlex, maximumFlex);
-    //Serial.print("Flexor process: ");
-    //Serial.println(valueFinal);
 
   }
   else if(typeSensor == PRESSURE){
     int sensorButton=sensor+1;
-    valueSensor = analogRead(pressureSensorPin[sensorButton]);
-    valueFinal = valueSensor;
+    valueFinal = analogRead(pressureSensorPin[sensorButton]);
   }
 
   return valueFinal;
@@ -186,23 +182,31 @@ int processState(int delay){
     buttons[i]=processButton(delay, i);
     switch(buttons[i]){
     case normal_click:
-      Serial.print("Click normal de ");
-      Serial.println(i);
+      //Serial.print("Click normal de ");
+      //Serial.println(i);
       break;
     case long_click:
-      Serial.print("Click fuerte de ");
-      Serial.println(i);
+      //Serial.print("Click fuerte de ");
+      //Serial.println(i);
       break;
     case no_click:
       break;
     }
 
     //comprobamos flexores
-    if((flexs[i]-deadFlexion) > 0){
-      flexorActived[i]=true;  
-    }
-    else{
+    if((flexs[i]<=(initialPosition[i]-deadFlexion))
+        || (flexs[i]>=(initialPosition[i]+deadFlexion))  ){
+      flexorActived[i]=true; 
+      //Serial.print("Flexor ");
+      //Serial.print(i);
+      //Serial.print(" activado: ");
+      //Serial.println(flexs[i]);
+    }else{
       flexorActived[i]=false;
+      //Serial.print("Flexor ");
+      //Serial.print(i);
+      //Serial.print(" desactivado: ");
+      //Serial.println(flexs[i]);
     }
   }
 }
@@ -248,6 +252,9 @@ void setup(){
     flexs[i] = 0;
     maxPressures[i]=false;
     pressures[i] = 0;
+    initialPosition[i]=map(analogRead(flexSensorPin[i]), 
+                            minimumSensorFlex, maximumSensorFlex, 
+                            minimumFlex, maximumFlex);
   }
 
   //copio los valores al previous
@@ -259,9 +266,11 @@ void setup(){
 void loop(){
   readState();
   processState(millis()-timer);
+  Serial.println();
   //processCommands();
   timer=millis();
   nextState();
+  delay(2000);
 }
 
 
