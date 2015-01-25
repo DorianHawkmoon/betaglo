@@ -3,6 +3,7 @@
 #include "ComunicacionBluetooth.h"
 
 const int DEDOS = 4;
+const int FLEXORS = 5;
 
 //state of the hand
 int flexs[DEDOS];
@@ -33,21 +34,21 @@ const int maximumSensorPressure = 40;
 const int minimumPressure = 0;
 const int maximumPressure = 100;
 //dead zone pressure
-const int deadPressure = 10;
+const int deadPressure = 70;
 //strong pressure
-const int strongPressure = 50;
+const int strongPressure = 240;
 
 //time of pressing sensor
 unsigned long timePressure[DEDOS];
 unsigned long timer=0;
-unsigned long timeResponse=200;
+unsigned long timeResponse=1000;
 
 const int FLEXOR = 1;
 const int PRESSURE = 2;
 
 //pins of sensors
 int flexSensorPin[DEDOS];
-int pressureSensorPin[DEDOS];
+int pressureSensorPin[FLEXORS];
 
 
 /**
@@ -59,20 +60,23 @@ int valueOfSensor(int typeSensor, int sensor){
 
   if(typeSensor == FLEXOR){
     valueSensor = analogRead(flexSensorPin[sensor]);
-    Serial.println("Flexor: " + valueSensor);
-    valueFinal = map(valueSensor, minimumSensorFlex, maximumSensorFlex, minimumFlex, maximumFlex);
-    Serial.println("Flexor process: " + valueFinal);
+    //Serial.print("Flexor: ");
+    //Serial.println(valueSensor);
+    valueFinal = valueSensor;//map(valueSensor, minimumSensorFlex, maximumSensorFlex, minimumFlex, maximumFlex);
+    //Serial.print("Flexor process: ");
+    //Serial.println(valueFinal);
 
   }
   else if(typeSensor == PRESSURE){
-    valueSensor = analogRead(pressureSensorPin[sensor]);
-    Serial.println("Pressure: " + valueSensor);
-    valueFinal = map(valueSensor, minimumSensorPressure, maximumSensorPressure, minimumPressure, maximumPressure);
-    Serial.println("Pressure process: " + valueFinal);
-
+    int sensorButton=sensor+1;
+    valueSensor = analogRead(pressureSensorPin[sensorButton]);
+    //Serial.print("Pressure: ");
+    //Serial.println(valueSensor);
+    valueFinal = valueSensor; //map(valueSensor, minimumSensorPressure, maximumSensorPressure, minimumPressure, maximumPressure);
+    //Serial.print("Pressure process: ");
   }
 
-  Serial.println();
+  //Serial.println();
   return valueFinal;
 }
 
@@ -98,7 +102,7 @@ void readState(){
  */
 ClickButton processButton(int delay, int button){
   int compareStates= ((previousPressures[button]-deadPressure) > 0) ? 1:0;
-  compareStates= ((pressures[button]-deadPressure) > 0) ? compareStates+1:compareStates;
+  compareStates= ((pressures[button]-deadPressure) > 0) ? compareStates+1:compareStates+2;
   boolean touch=false;
   boolean strong=false;
 
@@ -154,10 +158,12 @@ int processState(int delay){
     buttons[i]=processButton(delay, i);
     switch(buttons[i]){
     case normal_click:
-      Serial.println("Click normal de "+i);
+      Serial.print("Click normal de ");
+      Serial.println(i);
       break;
     case long_click:
-      Serial.println("Click fuerte de "+i);
+      Serial.print("Click fuerte de ");
+      Serial.println(i);
       break;
     case no_click:
       break;
@@ -192,13 +198,20 @@ void nextState(){
 
 void setup(){
   Serial.begin(9600);
-
+  
   //TODO setear los pines
-  pressures[0]=8;
-    pressures[0]=10;
-      pressures[0]=12;
-        pressures[0]=14;
-         
+  pressureSensorPin[0]=0;
+  pressureSensorPin[1]=1;
+  pressureSensorPin[2]=2;
+  pressureSensorPin[3]=3;
+  pressureSensorPin[4]=4;
+  
+  //pins of sensors
+  flexSensorPin[0]=6;
+  flexSensorPin[1]=7;
+  flexSensorPin[2]=8;
+  flexSensorPin[3]=9;
+  flexSensorPin[4]=10;
 
   for (int i=0; i<DEDOS; i++){
     timePressure[i]=0;
@@ -206,6 +219,7 @@ void setup(){
     flexs[i] = 0;
     pressures[i] = 0;
   }
+        
   //copio los valores al previous
   readState();
 
@@ -219,4 +233,5 @@ void loop(){
   timer=millis();
   nextState();
 }
+
 
