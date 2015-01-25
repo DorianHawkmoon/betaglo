@@ -1,6 +1,9 @@
 #include "Enumerations.h"
 #include "ProcessCommands.h"
-#include "ComunicacionBluetooth.h"
+#include <SoftwareSerial.h>
+
+
+
 
 const int DEDOS = 4;
 const int FLEXORS = 5;
@@ -230,6 +233,7 @@ void nextState(){
 
 void setup(){
   Serial.begin(9600);
+  setupBluetooth();
 
   //TODO setear los pines
   pressureSensorPin[0]=0;
@@ -266,11 +270,9 @@ void setup(){
 void loop(){
   readState();
   processState(millis()-timer);
-  Serial.println();
-  //processCommands();
+  processCommands(buttons, flexorActived, flexs);
   timer=millis();
   nextState();
-  delay(2000);
 }
 
 
