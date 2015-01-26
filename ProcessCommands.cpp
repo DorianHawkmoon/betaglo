@@ -7,19 +7,23 @@ void setupBluetooth(){
   mySerial.begin(9600);
 }
 
-void sendBluetooth(char* value){
-  value="Hola a todo el mundo!";
-  String command;
-  // Read device output if available.
+/*
+ * Condicion imprescindible que la cadena termine con \n
+ */
+void sendBluetooth(String value){
+  // Length (with one extra character for the null terminator and \n)
+  int strLen = value.length() + 2; 
+
+  // Prepare the character array (the buffer) 
+  char charArray[strLen];
+
+  // Copy it over 
+  value.toCharArray(charArray, strLen);
+  charArray[strLen-2]='\n';
+  charArray[strLen-1]='\0';
+  
   if (mySerial.available()) {
-    while(mySerial.available()) { // While there is more to be read, keep reading.
-      command += (char)mySerial.read();
-    }
-    Serial.println(command);
-    command = ""; // No repeats
-
-
-    mySerial.write(value);    
+    mySerial.write(charArray);    
   }
 }
 

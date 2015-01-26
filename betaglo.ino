@@ -185,12 +185,12 @@ int processState(int delay){
     buttons[i]=processButton(delay, i);
     switch(buttons[i]){
     case normal_click:
-      //Serial.print("Click normal de ");
-      //Serial.println(i);
+      Serial.print("Click normal de ");
+      Serial.println(i);
       break;
     case long_click:
-      //Serial.print("Click fuerte de ");
-      //Serial.println(i);
+      Serial.print("Click fuerte de ");
+      Serial.println(i);
       break;
     case no_click:
       break;
