@@ -30,7 +30,7 @@ const int maximumSensorFlex = 45;
 const int minimumFlex = 0;
 const int maximumFlex = 100;
 //dead zone flexion
-const int deadFlexion=20;
+const int deadFlexion=30;
 int initialPosition[DEDOS];
 
 //values of the pressure sensor
@@ -68,7 +68,8 @@ int valueOfSensor(int typeSensor, int sensor){
 
   //segun si estoy mirando flexor o presion
   if(typeSensor == FLEXOR){
-    valueSensor = analogRead(flexSensorPin[sensor]);
+    int sensorValue=sensor;
+    valueSensor = analogRead(flexSensorPin[sensorValue]);
     valueFinal = map(valueSensor, minimumSensorFlex, maximumSensorFlex, minimumFlex, maximumFlex);
 
   }
@@ -189,8 +190,8 @@ int processState(int delay){
       Serial.println(i);
       break;
     case long_click:
-      Serial.print("Click fuerte de ");
-      Serial.println(i);
+      //Serial.print("Click fuerte de ");
+      //Serial.println(i);
       break;
     case no_click:
       break;
@@ -233,7 +234,7 @@ void nextState(){
 
 void setup(){
   Serial.begin(9600);
-  setupBluetooth();
+  setupCommand();
 
   //TODO setear los pines
   pressureSensorPin[0]=0;
@@ -247,8 +248,9 @@ void setup(){
   flexSensorPin[1]=7;
   flexSensorPin[2]=8;
   flexSensorPin[3]=9;
-  flexSensorPin[4]=10;
-
+  //flexSensorPin[4]=9;
+  Serial.println("Segundo para setear los flexores");
+  delay(1000);
   for (int i=0; i<DEDOS; i++){
     timePressure[i]=0;
     timeWait[i]=0;
@@ -260,6 +262,7 @@ void setup(){
                             minimumSensorFlex, maximumSensorFlex, 
                             minimumFlex, maximumFlex);
   }
+  Serial.println("Flexores seteados");
 
   //copio los valores al previous
   readState();
@@ -270,9 +273,10 @@ void setup(){
 void loop(){
   readState();
   processState(millis()-timer);
-  processCommands(buttons, flexorActived, flexs);
+  processCommands(buttons, flexorActived, flexs, DEDOS);
   timer=millis();
   nextState();
+  //delay(300);
 }
 
 

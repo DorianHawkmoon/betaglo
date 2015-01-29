@@ -4,9 +4,9 @@
 #define ENUMERATION
 //enum state button/click
 enum ClickButton{
+  no_click = 0,
   normal_click,
-  long_click,
-  no_click
+  long_click
 };
 
 //enum of states/commands to sent to computer
@@ -24,5 +24,11 @@ enum Commands {
   axis_y_forward = 9, //flexion otros dos dedos
   axis_y_back = 10,
 };
+
+enum States {
+  mouse,
+  keyboard
+};
+
 
 #endif
