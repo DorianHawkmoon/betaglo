@@ -30,5 +30,11 @@ enum States {
   keyboard
 };
 
+enum StatesKeyboard {
+  minusculas,
+  mayusculas,
+  numeros,
+  simbolos
+};
 
 #endif

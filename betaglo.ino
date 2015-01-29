@@ -40,9 +40,9 @@ const int maximumSensorPressure = 40;
 const int minimumPressure = 0;
 const int maximumPressure = 100;
 //dead zone pressure
-const int deadPressure = 70;
+const int deadPressure = 50;
 //strong pressure
-const int strongPressure = 240;
+const int strongPressure = 300;
 
 //time of pressing sensor
 unsigned long timePressure[DEDOS];
@@ -190,8 +190,8 @@ int processState(int delay){
       Serial.println(i);
       break;
     case long_click:
-      //Serial.print("Click fuerte de ");
-      //Serial.println(i);
+      Serial.print("Click fuerte de ");
+      Serial.println(i);
       break;
     case no_click:
       break;
