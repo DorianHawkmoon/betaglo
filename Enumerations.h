@@ -27,7 +27,8 @@ enum Commands {
 
 enum States {
   mouse,
-  keyboard
+  keyboard,
+  patterns
 };
 
 enum StatesKeyboard {

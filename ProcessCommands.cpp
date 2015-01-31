@@ -12,43 +12,40 @@ int timesFinger;
 unsigned long previousTimerKeys;
 int limitTimeFinger=500;
 char keyboardLettersMayus[][7]={
-  { 
-    'S','D','U','G','H','Ñ'      }
-  ,
-  {
-    'O','I','T','B','Q','J','K'      }
-  ,
-  {
-    'A','N','C','P','Y','Z','W'       }
-  ,
-  {
-    'E','R','L','M','V','F','X'       }
+  { 'S','D','U','G','H','Ñ' },
+  {'O','I','T','B','Q','J','K' },
+  {'A','N','C','P','Y','Z','W' },
+  {'E','R','L','M','V','F','X' }
+};
 
+char numbers[][7]={
+  { '1','5','9' },
+  { '2','6','0' },
+  { '3','7' },
+  { '4','8' }
 };
 
 char keyboardLettersMinus[][7]={
-  { 
-    's','d','u','g','h','ñ'      }
-  ,
-  {
-    'o','i','t','b','q','j','k'      }
-  ,
-  {
-    'a','n','c','p','y','z','w'       }
-  ,
-  {
-    'e','r','l','m','v','f','x'       }
+  { 's','d','u','g','h','ñ' },
+  { 'o','i','t','b','q','j','k' },
+  { 'a','n','c','p','y','z','w' },
+  { 'e','r','l','m','v','f','x' }
 };
 
+char symbols[][7]={
+  { ' ','!',')',':' },
+  { '.','?','¡',';' },
+  { ',','(','¿','\'' },
+  { '\n','\b','"' }
+};
 
 //por cada dedo(4), el numero de caracteres que tiene para saber que modulo hacer,
 //ordenados segun la enumeracion
 int numberChars[][4]={
-  {    
-    6,7,7,7            }
-  ,
-  {    
-    6,7,7,7            }
+  { 6,7,7,7 },
+  { 6,7,7,7 },
+  { 3,3,2,2 },
+  { 4,4,4,3 }
 };
 
 void setupCommand(){
@@ -86,22 +83,34 @@ void sendKey(){
   String key="tecla:";
   char charToAppend;
   if(timerKeys!=-1 && timesFinger!=-1){
-    
+
     switch(stateKeyboard){
-      case minusculas:
-        charToAppend=keyboardLettersMinus[finger][timesFinger];
-        break;
-      case mayusculas:
-        charToAppend=keyboardLettersMayus[finger][timesFinger];
-        break;
-      case simbolos:
-        charToAppend='j';
-        break;
-      case numeros:
-        charToAppend='k';
-        break;
+    case minusculas:
+      charToAppend=keyboardLettersMinus[finger][timesFinger];
+      break;
+    case mayusculas:
+      charToAppend=keyboardLettersMayus[finger][timesFinger];
+      break;
+    case simbolos:
+      charToAppend=symbols[finger][timesFinger];
+      //vigilo caracteres especiales dificiles
+      if(charToAppend=='\n'){
+        key=key+"PK_Enter";
+      }else if(charToAppend=='\b'){
+        key=key+"BackSpace";
+      }else if(charToAppend==' '){
+        key=key+"space";
+      }else{
+        key=key+charToAppend;
+      }
+      break;
+    case numeros:
+      charToAppend=numbers[finger][timesFinger];
+      break;
     }
-    key=key+charToAppend;
+    if(stateKeyboard!=simbolos){
+      key=key+charToAppend;
+    }
   }
   timerKeys=-1;
   timesFinger=-1;
@@ -111,43 +120,50 @@ void sendKey(){
 void processButtonMouse(int value){
   switch(value){
     //click normal del indice
-    case 64:
-      sendBluetooth("click");
-      break;
-  
-      //click fuerte del indice
-    case 128:
-      break;
-  
-      //click fuerte corazon
-    case 32:
-      //control c
-      break;
-  
-      //click fuerte anular
-    case 8:
-      //control v
-      break;
-      //anular normal
-    case 4:
-      //control z
-      break;
-  
-  
-      //click normal corazon
-    case 16:
-      sendBluetooth("clickderecho");
-      break;
-  
-  
-  
-  
-      //click fuerte meñique
-    case 2:
-      Serial.println("changed state");
-      stateHand=keyboard;
-      stateKeyboard=minusculas;
-      break;
+  case 64:
+    sendBluetooth("click");
+    break;
+
+    //click fuerte del indice
+  case 128:
+    sendBluetooth("apretar");
+    break;
+
+    //click normal corazon
+  case 16:
+    sendBluetooth("clickderecho");
+    break;
+
+    //click fuerte corazon
+  case 32:
+    sendBluetooth("soltar");
+    break;
+
+
+    //anular normal
+  case 4:
+    //control C
+    sendBluetooth("tecla:ctrl+c");
+    break;
+
+    //click fuerte anular
+  case 8:
+    Serial.println("changed state patterns");
+    stateHand=patterns;
+    break;
+
+    //click normal meñique
+  case 1: 
+    //control v
+    sendBluetooth("tecla:ctrl+v");
+    break;
+
+    //click fuerte meñique
+  case 2:
+    Serial.println("changed state keyboard");
+    stateHand=keyboard;
+    stateKeyboard=minusculas;
+    break;
   }
 }
 
@@ -160,45 +176,50 @@ void processButtonKeyboard(int value){
   int numberFinger=-1;
   switch(value){
     //click fuerte meñique
-    case 2:
-      Serial.println("changed state");
-      stateHand=mouse;
-      break;
-      //anular fuerte
-    case 8:
-      stateKeyboard=numeros;
-      break;
-      //dedo corazon fuerte
-    case 32:
-      if(stateKeyboard==minusculas){
-        stateKeyboard=mayusculas; 
-      }
-      else{
-        stateKeyboard=minusculas;
-      }
-      break;
-      //click fuerte indice
-    case 128:
-      stateKeyboard=simbolos;
-        break;
-  
-  
-      //indice
-    case 64:
-      numberFinger=0;
-      break;
-      //corazon
-    case 16:
-      numberFinger=1;      
-      break;
-      //anular
-    case 4:
-      numberFinger=2;
-      break;
-      //meñique
-    case 1:
-      numberFinger=3;
-      break;
+  case 2:
+    Serial.println("changed state mouse");
+    stateHand=mouse;
+    break;
+    //anular fuerte
+  case 8:
+    Serial.println("changed state numbers");
+    stateKeyboard=numeros;
+    break;
+    //dedo corazon fuerte
+  case 32:
+
+    if(stateKeyboard==minusculas){
+      Serial.println("changed state mayusculas");
+      stateKeyboard=mayusculas; 
+    }
+    else{
+      Serial.println("changed state minusculas");
+      stateKeyboard=minusculas;
+    }
+    break;
+    //click fuerte indice
+  case 128:
+    Serial.println("changed state simbolos");
+    stateKeyboard=simbolos;
+    break;
+
+
+    //indice
+  case 64:
+    numberFinger=0;
+    break;
+    //corazon
+  case 16:
+    numberFinger=1;      
+    break;
+    //anular
+  case 4:
+    numberFinger=2;
+    break;
+    //meñique
+  case 1:
+    numberFinger=3;
+    break;
   }
 
   if(numberFinger!=-1){
@@ -209,6 +230,47 @@ void processButtonKeyboard(int value){
     timesFinger=(timesFinger+1)%(numberChars[0][finger]);
     timerKeys=millis();
 
+  }
+}
+
+void processButtonPatterns(int value){
+  switch(value){
+    //click normal del indice
+  case 64:
+    sendBluetooth("tecla:ctrl+z");
+    break;
+
+    //click fuerte del indice
+  case 128:
+    break;
+
+    //click normal corazon
+  case 16:
+    sendBluetooth("comando:firefox");
+    break;
+
+    //click fuerte corazon
+  case 32:
+    break;
+
+
+    //anular normal
+  case 4:
+    break;
+
+    //click fuerte anular
+  case 8:
+    Serial.println("changed state initial");
+    stateHand=mouse;
+    break;
+
+    //click normal meñique
+  case 1: 
+    break;
+
+    //click fuerte meñique
+  case 2:
+    break;
   }
 }
 
@@ -230,8 +292,12 @@ void processCommands(ClickButton buttons[],boolean flexorActived[], int flexor[]
   //preferencia a los botones para procesar el estado
   if(stateHand==mouse){
     processButtonMouse(result);
-  } else if(stateHand==keyboard){
+  } 
+  else if(stateHand==keyboard){
     processButtonKeyboard(result);
+  } 
+  else if(patterns){
+    processButtonPatterns(result);
   }
 
 
@@ -246,28 +312,28 @@ void processCommands(ClickButton buttons[],boolean flexorActived[], int flexor[]
           value = map(value, 0, 100, 1, 20);
           String command="raton:";
           switch(i){
-            case 0:
-              command=command+value;
-              command=command+":0";
-              sendBluetooth(command);
-              break;
-            case 1:
-              value=value*(-1);
-              command=command+value;
-              command=command+":0";
-              sendBluetooth(command);
-              break;
-            case 2:
-              value=value*(-1);
-              command=command+"0:";
-              command=command+value;
-              sendBluetooth(command);
-              break;
-            case 3:
-              command=command+"0:";
-              command=command+value;
-              sendBluetooth(command);
-              break;
+          case 0:
+            command=command+value;
+            command=command+":0";
+            sendBluetooth(command);
+            break;
+          case 1:
+            value=value*(-1);
+            command=command+value;
+            command=command+":0";
+            sendBluetooth(command);
+            break;
+          case 2:
+            value=value*(-1);
+            command=command+"0:";
+            command=command+value;
+            sendBluetooth(command);
+            break;
+          case 3:
+            command=command+"0:";
+            command=command+value;
+            sendBluetooth(command);
+            break;
           }
           timerMouse=millis();
         }
@@ -275,4 +341,5 @@ void processCommands(ClickButton buttons[],boolean flexorActived[], int flexor[]
     }
   }
 }
+
 

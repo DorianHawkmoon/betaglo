@@ -1,0 +1,9 @@
+acción a realizar -> dedo que realiza -> string y variables
+click normal -> click índice -> "click"
+click sin soltar -> click fuerte índice -> "apretar"
+soltar click -> click fuerte índice -> "soltar"
+click derecho -> click anular -> "clickderecho"
+mover ratón -> los cuatro flexores (+y,-y,+x,-x) -> "raton:x:y"
+ctrl+c -> dedo corazon fuerte -> "tecla:ctrl+c"
+ctrl+v -> dedo fuerte anular -> "tecla:ctrl+v"
+cambio estado(solo arduino) -> dedo fuerte meñique -> pasa a modo teclado

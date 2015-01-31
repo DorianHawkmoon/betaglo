@@ -30,7 +30,7 @@ const int maximumSensorFlex = 45;
 const int minimumFlex = 0;
 const int maximumFlex = 100;
 //dead zone flexion
-const int deadFlexion=30;
+const int deadFlexion=25;
 int initialPosition[DEDOS];
 
 //values of the pressure sensor
