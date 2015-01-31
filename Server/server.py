@@ -16,7 +16,9 @@ def processCommand(cmd):
 	elif cmd[0] == "apretar":
 		subprocess.call(["xdotool", "mousedown"])
 	elif cmd[0] == "soltar":
-		subprocess.call(["xdotool", "mouseup"])		
+		subprocess.call(["xdotool", "mouseup"])	
+	elif cmd[0] == "comando":
+		subprocess.call([cmd[1]])	
 
 
 bluetoothSerial = serial.Serial("/dev/rfcomm1", baudrate=9600)
