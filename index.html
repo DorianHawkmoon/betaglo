@@ -1,0 +1,270 @@
+<!doctype html>
+<!-- The Time Machine GitHub pages theme was designed and developed by Jon Rohan, on Feb 7, 2012. -->
+<!-- Follow him for fun. http://twitter.com/jonrohan. Tail his code on https://github.com/jonrohan -->
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+  <link rel="stylesheet" href="stylesheets/stylesheet.css" media="screen">
+  <link rel="stylesheet" href="stylesheets/github-dark.css">
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+  <script type="text/javascript" src="javascripts/script.js"></script>
+
+  <title>Betaglo</title>
+  <meta name="description" content="Arduino code for a hand to control a computer">
+
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+
+</head>
+
+<body>
+
+  <div class="wrapper">
+    <header>
+      <h1 class="title">Betaglo</h1>
+    </header>
+    <div id="container">
+      <p class="tagline">Arduino code for a hand to control a computer</p>
+      <div id="main" role="main">
+        <div class="download-bar">
+        <div class="inner">
+          <a href="https://github.com/DorianHawkmoon/betaglo/tarball/master" class="download-button tar"><span>Download</span></a>
+          <a href="https://github.com/DorianHawkmoon/betaglo/zipball/master" class="download-button zip"><span>Download</span></a>
+          <a href="https://github.com/DorianHawkmoon/betaglo" class="code">View Betaglo on GitHub</a>
+        </div>
+        <span class="blc"></span><span class="trc"></span>
+        </div>
+        <article class="markdown-body">
+          <h1>
+<a id="betaglo" class="anchor" href="#betaglo" aria-hidden="true"><span class="octicon octicon-link"></span></a>Betaglo</h1>
+
+<p>This project consist of an human interface with the computer. A glove let us to control the mouse, writing with the keyboard and execute some predefined commands.
+<a href="link%20page">Pictures and a demo video with a little more information (not done yet)</a></p>
+
+<h2>
+<a id="making-betaglo" class="anchor" href="#making-betaglo" aria-hidden="true"><span class="octicon octicon-link"></span></a>making betaglo</h2>
+
+<p>First of all, we needed a gloves, wires and some sensors (flexors and pressure sensors). An arduino with a bluetooth module and a computer with linux to control.
+In our case, flexors of 7cm and pressure of 2cm of diameter. After the test, we think flexors of 11cm and pressure with less diameter will work better.
+Also we used a raspberry as a computer to control and an Arduino Atmega 2560.</p>
+
+<p>Sewing the sensors to the glove, we used some tape to help us.
+(image)
+<a href="Images/sewing.jpg">photo sewing</a></p>
+
+<p>The circuit is based on the next diagram, one wire to 5V and another wire with two branchs, one with a resistance to mass and another to an input of arduino. All the wires to the same destiny, was soldered in the same wire (mass and 5V). We used some tape to gather up al lthe wires to have a better look.
+<a href="Images/wires.jpg">wires</a>
+<a href="Images/soldering.jpg">soldering</a>
+<a href="Images/testing.jpg">testing</a></p>
+
+<p>Our glove suck because we have to unsolder and solder it again because of a mistake (the way it looked the first time... so beautiful)
+<a href="Images/final%20testing.jpg">final test</a></p>
+
+<h2>
+<a id="coding-betaglo" class="anchor" href="#coding-betaglo" aria-hidden="true"><span class="octicon octicon-link"></span></a>coding betaglo</h2>
+
+<p>Simples lines of code. Pairing the bluetooth device and the computer is needed.
+The computer needs to install the library python-serial and xdotool.
+In the code, we set three states of the hand, mouse mode, keyboard mode and command mode</p>
+
+<p>index finger = A
+middle finger = B
+ring finger = C
+pinky = D</p>
+
+<h3>
+<a id="mouse-mode" class="anchor" href="#mouse-mode" aria-hidden="true"><span class="octicon octicon-link"></span></a>mouse mode</h3>
+
+<p>flexors:</p>
+
+<ul>
+<li>A -&gt; move down</li>
+<li>B -&gt; move up</li>
+<li>C -&gt; move left</li>
+<li>D -&gt; move right</li>
+</ul>
+
+<p>pressure:</p>
+
+<ul>
+<li>A normal -&gt; click</li>
+<li>A strong -&gt; hold click</li>
+<li>B normal -&gt; right click</li>
+<li>B strong -&gt; release click</li>
+<li>C normal -&gt; Ctrl+C</li>
+<li>C strong -&gt; change to command's state</li>
+<li>D normal -&gt; Ctrl+V</li>
+<li>D strong -&gt; change to keyboard's state</li>
+</ul>
+
+<h3>
+<a id="command-mode" class="anchor" href="#command-mode" aria-hidden="true"><span class="octicon octicon-link"></span></a>command mode</h3>
+
+<p>flexor not operative</p>
+
+<ul>
+<li>A normal -&gt; Ctrl+z</li>
+<li>B normal -&gt; browser (epiphany, installed in raspbian)</li>
+<li>C strong -&gt; come back to mouse's state</li>
+</ul>
+
+<h3>
+<a id="keyboard-mode" class="anchor" href="#keyboard-mode" aria-hidden="true"><span class="octicon octicon-link"></span></a>keyboard mode</h3>
+
+<p>flexor not operative</p>
+
+<p>Strong click change the keyboard's state</p>
+
+<ul>
+<li>A -&gt; symbols' keyboard</li>
+<li>B -&gt; change between lowercase and uppercase in normal keyboard state. From another state, change to letters' keyboard</li>
+<li>C -&gt; numbers' keyboard</li>
+<li>D -&gt; Regresa al estado del ratón</li>
+</ul>
+
+<table>
+<thead>
+<tr>
+<th align="center">A normal</th>
+<th align="center">B normal</th>
+<th align="center">C normal</th>
+<th align="center">D normal</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center">S</td>
+<td align="center">O</td>
+<td align="center">A</td>
+<td align="center">E</td>
+</tr>
+<tr>
+<td align="center">D</td>
+<td align="center">I</td>
+<td align="center">N</td>
+<td align="center">R</td>
+</tr>
+<tr>
+<td align="center">U</td>
+<td align="center">T</td>
+<td align="center">C</td>
+<td align="center">L</td>
+</tr>
+<tr>
+<td align="center">G</td>
+<td align="center">B</td>
+<td align="center">P</td>
+<td align="center">M</td>
+</tr>
+<tr>
+<td align="center">H</td>
+<td align="center">Q</td>
+<td align="center">Y</td>
+<td align="center">V</td>
+</tr>
+<tr>
+<td align="center">Ñ</td>
+<td align="center">J</td>
+<td align="center">Z</td>
+<td align="center">F</td>
+</tr>
+<tr>
+<td align="center"></td>
+<td align="center">K</td>
+<td align="center">W</td>
+<td align="center">X</td>
+</tr>
+</tbody>
+</table>
+
+<table>
+<thead>
+<tr>
+<th align="center">A normal</th>
+<th align="center">B normal</th>
+<th align="center">C normal</th>
+<th align="center">D normal</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center">1</td>
+<td align="center">2</td>
+<td align="center">3</td>
+<td align="center">4</td>
+</tr>
+<tr>
+<td align="center">5</td>
+<td align="center">6</td>
+<td align="center">7</td>
+<td align="center">8</td>
+</tr>
+<tr>
+<td align="center">9</td>
+<td align="center">0</td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+</tbody>
+</table>
+
+<table>
+<thead>
+<tr>
+<th align="center">A normal</th>
+<th align="center">B normal</th>
+<th align="center">C normal</th>
+<th align="center">D normal</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center">Space</td>
+<td align="center">.</td>
+<td align="center">,</td>
+<td align="center">Enter</td>
+</tr>
+<tr>
+<td align="center">!</td>
+<td align="center">?</td>
+<td align="center">(</td>
+<td align="center">Delete</td>
+</tr>
+<tr>
+<td align="center">)</td>
+<td align="center">¡</td>
+<td align="center">¿</td>
+<td align="center">"</td>
+</tr>
+<tr>
+<td align="center">:</td>
+<td align="center">;</td>
+<td align="center">'</td>
+<td align="center"></td>
+</tr>
+</tbody>
+</table>
+        </article>
+      </div>
+    </div>
+    <footer>
+      <div class="owner">
+      <p><a href="https://github.com/DorianHawkmoon" class="avatar"><img src="https://avatars0.githubusercontent.com/u/5165978?v=3&amp;s=60" width="48" height="48"></a> <a href="https://github.com/DorianHawkmoon">DorianHawkmoon</a> maintains <a href="https://github.com/DorianHawkmoon/betaglo">Betaglo</a></p>
+
+
+      </div>
+      <div class="creds">
+        <small>This page generated using <a href="https://pages.github.com/">GitHub Pages</a><br>theme by <a href="https://twitter.com/jonrohan/">Jon Rohan</a></small>
+      </div>
+    </footer>
+  </div>
+  <div class="current-section">
+    <a href="#top">Scroll to top</a>
+    <a href="https://github.com/DorianHawkmoon/betaglo/tarball/master" class="tar">tar</a><a href="https://github.com/DorianHawkmoon/betaglo/zipball/master" class="zip">zip</a><a href="" class="code">source code</a>
+    <p class="name"></p>
+  </div>
+
+  
+</body>
+</html>
