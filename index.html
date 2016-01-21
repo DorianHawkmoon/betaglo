@@ -25,7 +25,7 @@
       <h1 class="title">Betaglo</h1>
     </header>
     <div id="container">
-      <p class="tagline">Arduino code for a hand to control a computer</p>
+      <p class="tagline">Arduino code for a glove to control a computer</p>
       <div id="main" role="main">
         <div class="download-bar">
         <div class="inner">
@@ -39,39 +39,41 @@
           <h1>
 <a id="betaglo" class="anchor" href="#betaglo" aria-hidden="true"><span class="octicon octicon-link"></span></a>Betaglo</h1>
 
-<p>This project consist of an human interface with the computer. A glove let us to control the mouse, writing with the keyboard and execute some predefined commands.
-<a href="link%20page">Pictures and a demo video with a little more information (not done yet)</a></p>
+<p>This project consist of an human interface with the computer. A glove let us to control the mouse, writing with the keyboard and execute some predefined commands.</p>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/OANJSzbb5do" allowfullscreen></iframe>
 
 <h2>
-<a id="making-betaglo" class="anchor" href="#making-betaglo" aria-hidden="true"><span class="octicon octicon-link"></span></a>making betaglo</h2>
+<a id="making-betaglo" class="anchor" href="#making-betaglo" aria-hidden="true"><span class="octicon octicon-link"></span></a>Making betaglo</h2>
 
 <p>First of all, we needed a gloves, wires and some sensors (flexors and pressure sensors). An arduino with a bluetooth module and a computer with linux to control.
 In our case, flexors of 7cm and pressure of 2cm of diameter. After the test, we think flexors of 11cm and pressure with less diameter will work better.
 Also we used a raspberry as a computer to control and an Arduino Atmega 2560.</p>
 
 <p>Sewing the sensors to the glove, we used some tape to help us.
-(image)
-<a href="Images/sewing.jpg">photo sewing</a></p>
+<img src="images/sewing.jpg" alt="photo sewing"></p>
 
 <p>The circuit is based on the next diagram, one wire to 5V and another wire with two branchs, one with a resistance to mass and another to an input of arduino. All the wires to the same destiny, was soldered in the same wire (mass and 5V). We used some tape to gather up al lthe wires to have a better look.
-<a href="Images/wires.jpg">wires</a>
-<a href="Images/soldering.jpg">soldering</a>
-<a href="Images/testing.jpg">testing</a></p>
+<img src="images/wires.jpg" alt="wires">
+<img src="images/soldering.jpg" alt="soldering">
+<img src="images/testing.jpg" alt="testing"></p>
 
 <p>Our glove suck because we have to unsolder and solder it again because of a mistake (the way it looked the first time... so beautiful)
-<a href="Images/final%20testing.jpg">final test</a></p>
+<img src="images/final testing.jpg" alt="final test"></p>
 
 <h2>
-<a id="coding-betaglo" class="anchor" href="#coding-betaglo" aria-hidden="true"><span class="octicon octicon-link"></span></a>coding betaglo</h2>
+<a id="coding-betaglo" class="anchor" href="#coding-betaglo" aria-hidden="true"><span class="octicon octicon-link"></span></a>Coding Betaglo</h2>
 
 <p>Simples lines of code. Pairing the bluetooth device and the computer is needed.
 The computer needs to install the library python-serial and xdotool.
 In the code, we set three states of the hand, mouse mode, keyboard mode and command mode</p>
 
-<p>index finger = A
-middle finger = B
-ring finger = C
-pinky = D</p>
+<p>If you fell confident with spanish, check the pdf we made as a class work with more details: <a href="resources/betaglo.pdf" >Pdf with process and specifications</a>. Of course, with removed parts to respect our privacy and other details not related.</p>
+
+<p>We considered the below:</p>
+<ul><li>index finger = A</li>
+<li>middle finger = B</li>
+<li>ring finger = C</li>
+<li>pinky = D</li></ul>
 
 <h3>
 <a id="mouse-mode" class="anchor" href="#mouse-mode" aria-hidden="true"><span class="octicon octicon-link"></span></a>mouse mode</h3>
@@ -120,7 +122,7 @@ pinky = D</p>
 <li>A -&gt; symbols' keyboard</li>
 <li>B -&gt; change between lowercase and uppercase in normal keyboard state. From another state, change to letters' keyboard</li>
 <li>C -&gt; numbers' keyboard</li>
-<li>D -&gt; Regresa al estado del ratón</li>
+<li>D -&gt; come back to mouse's state</li>
 </ul>
 
 <table>
@@ -263,8 +265,6 @@ pinky = D</p>
     <a href="#top">Scroll to top</a>
     <a href="https://github.com/DorianHawkmoon/betaglo/tarball/master" class="tar">tar</a><a href="https://github.com/DorianHawkmoon/betaglo/zipball/master" class="zip">zip</a><a href="" class="code">source code</a>
     <p class="name"></p>
-  </div>
-
-  
+  </div>  
 </body>
 </html>
